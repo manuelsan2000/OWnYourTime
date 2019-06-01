@@ -15,11 +15,15 @@ namespace Global_Mouse_Hooks
     {
         public static string appIdStr = "OWn Your Time";
         public static int alertExpirationTimeSeconds = 3;
+        public static int idleTimeToUpdateBreakMiliseconds = 15000;
+        public static int workingTimeBeforeAlertMiliseconds = 60000;
+
         public static long lastActivityMillis;
         public static long startActivityMillis;
         public static long continousWorkingTimeMillis = 0;
         public static long elapsedMinutes;
         public static long lastBreakMillis;
+        public static long lastNotificationMillis;
         public static long currentActivityMillis = 0;
         public static int notificationId = 0;
 
@@ -32,7 +36,7 @@ namespace Global_Mouse_Hooks
             Console.WriteLine($"Starting time: {lastActivityMillis}");
         }
 
-        public static void validarDatos()
+        public static Boolean validarDatos()
         {
             long currentTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 
@@ -46,36 +50,36 @@ namespace Global_Mouse_Hooks
                     "por salud");
                 lastBreakMillis = currentTime;
                 continousWorkingTimeMillis = 1;
-                return;
+                lastNotificationMillis = currentTime;
+                return true;
             }
 
             continousWorkingTimeMillis = currentTime - lastBreakMillis;
             long idleTime = currentTime - lastActivityMillis;
-            //decimal elapsedMinutes = continousWorkingTimeMillis / (60000);
             long elapsedTime = continousWorkingTimeMillis;
 
-            Console.WriteLine($"Validando ... elapsedTime {elapsedTime} - idleTime {idleTime} ");
+            Console.WriteLine($"Validando ... elapsedTime {elapsedTime / 60000} - idleTime {idleTime / 60000} ");
 
-            
-            if (idleTime > 15000) //15 segundos idle
+            if (idleTime > idleTimeToUpdateBreakMiliseconds) //15 segundos idle
             {
                 //ENVIAR 
-                Console.WriteLine("BREAK DUE TO 15000 IDLE!!");
-                continousWorkingTimeMillis = 0;
+                Console.WriteLine($"BREAK REPORT DUE TO {idleTimeToUpdateBreakMiliseconds} IDLE!!");
+                continousWorkingTimeMillis = 1;
                 lastBreakMillis = currentTime;
-                return;
+                return false;
             }
 
-            if (elapsedTime > (60000) ) //1 minuto de tiempo trabajado
+            if (elapsedTime > workingTimeBeforeAlertMiliseconds ) //X tiempo trabajado
             {
-                new NotificationManager().sendDesktopBreakNotification("Hemos detectado que llevas x tiempo sin descansar, por favor toma un break!");
-                return;
+                new NotificationManager().sendDesktopBreakNotification($"Hemos detectado que llevas { elapsedTime/60000 } minutos sin descansar, por favor toma un break!");
+                lastNotificationMillis = currentTime;
+                lastBreakMillis = currentTime;
+                return true;
             }
-
+            return false;
         }
-
         
-        public static void PopUp(String msg1, String msg2, String msg3)
+        /*public static void PopUp(String msg1, String msg2, String msg3)
         {
             string title = msg1;
             string content = msg2;
@@ -174,5 +178,6 @@ namespace Global_Mouse_Hooks
             // And then show it
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
+        */
     }
 }

@@ -15,7 +15,7 @@ namespace Global_Mouse_Hooks
             while (true)
             {
                 Console.WriteLine("Validando datos...");
-                ConfigValues.validarDatos();
+                Boolean notificacionEnviada = ConfigValues.validarDatos();
                 Console.WriteLine("Durmiendo thread 5 segundos");
                 Thread.Sleep(5000);
             }
