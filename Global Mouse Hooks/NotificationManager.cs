@@ -18,13 +18,6 @@ namespace Global_Mouse_Hooks
         {
             //Constructor
         }
-        public void sendDesktopBreakNotification(string message)
-        {
-            //Console.WriteLine("BREAK NOTIFICATION!!");
-            //PopUp("STRING1", "STRING2", "STRING3");
-            sendNotificationMessage(message);
-            //SEND NOTIFICATION CODE
-        }
 
         public void sendDesktopInitialNotification(string message, Boolean hasButtons)
         {
@@ -89,6 +82,11 @@ namespace Global_Mouse_Hooks
                 {
                     BindingGeneric = new ToastBindingGeneric()
                     {
+                        HeroImage = new ToastGenericHeroImage()
+                        {
+                            Source = @"\1043-360x180.jpg"
+                        },
+
                         Children =
                         {
                             new AdaptiveText()
@@ -110,42 +108,36 @@ namespace Global_Mouse_Hooks
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
-                            Source = "file:///C:/Users/fernando.cervantes/source/OWnYourTime/Global%20Mouse%20Hooks/1005-64x64.jpg",
+                            Source = @"\1005-64x64.jpg",
                             HintCrop = ToastGenericAppLogoCrop.Circle
-                        }
+                        },   
                     }
                 },
+                Duration = ToastDuration.Long,
 
                 Actions = new ToastActionsCustom()
                 {
-                    /*
                     Inputs =
                     {
-                        new ToastTextBox("tbReply")
+                        new ToastSelectionBox("snoozeTime")
                         {
-                            PlaceholderContent = "Type a response"
+                            DefaultSelectionBoxItemId = "15",
+                            Items =
+                            {
+                                new ToastSelectionBoxItem("5", "5 minutes"),
+                                new ToastSelectionBoxItem("15", "15 minutes"),
+                            }
                         }
                     },
-                    */
-                 
+
                     Buttons =
                     {
-                        // Note that there's no reason to specify background activation, since our COM
-                        // activator decides whether to process in background or launch foreground window
-                        new ToastButton("Dismiss", new QueryString()
+                        new ToastButtonSnooze()
                         {
-                            { "action", "dismiss" },
-                            { "conversationId" }
+                            SelectionBoxId = "snoozeTime"
+                        },
 
-                        }.ToString()),
-
-                        new ToastButton("Accept", new QueryString()
-                        {
-                            { "action", "Accept" },
-                            { "conversationId" }
-
-                        }.ToString())
-
+                        new ToastButtonDismiss()
                     }
                 }
             };
