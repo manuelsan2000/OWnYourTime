@@ -84,7 +84,7 @@ namespace Global_Mouse_Hooks
                     {
                         HeroImage = new ToastGenericHeroImage()
                         {
-                            Source = @"\1043-360x180.jpg"
+                            Source = "1043-360x180.jpg"
                         },
 
                         Children =
@@ -108,7 +108,7 @@ namespace Global_Mouse_Hooks
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
-                            Source = @"\1005-64x64.jpg",
+                            Source = "1005-64x64.jpg",
                             HintCrop = ToastGenericAppLogoCrop.Circle
                         },   
                     }
