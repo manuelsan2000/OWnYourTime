@@ -16,7 +16,7 @@ namespace Global_Mouse_Hooks
         public static string appIdStr = "OWn Your Time";
         public static int alertExpirationTimeSeconds = 3;
         public static int idleTimeToUpdateBreakMiliseconds = 15000;
-        public static int workingTimeBeforeAlertMiliseconds = 60000;
+        public static int workingTimeBeforeAlertMiliseconds = 10000;
 
         public static long lastActivityMillis;
         public static long startActivityMillis;
@@ -46,7 +46,7 @@ namespace Global_Mouse_Hooks
             {
                 //JUST STARTED OR RETURNED FROM BREAK
                 //SEND NOTIFICATION TO TAKE BREAKS EVERY HOUR
-                new NotificationManager().sendDesktopInitialNotification("Recuerda que es importante tomar breaks de al menos 5 minutos cada hora " +
+                new NotificationManager().sendNotificationMessage("Recuerda que es importante tomar breaks de al menos 5 minutos cada hora " +
                     "por salud", false);
                 lastBreakMillis = currentTime;
                 continousWorkingTimeMillis = 1;
@@ -71,7 +71,7 @@ namespace Global_Mouse_Hooks
 
             if (elapsedTime > workingTimeBeforeAlertMiliseconds ) //X tiempo trabajado
             {
-                new NotificationManager().sendDesktopInitialNotification($"Hemos detectado que llevas { elapsedTime/60000 } minutos sin descansar, por favor toma un break!", true);
+                new NotificationManager().sendNotificationMessage($"Hemos detectado que llevas { elapsedTime/60000 } minutos sin descansar, por favor toma un break!", true);
                 lastNotificationMillis = currentTime;
                 lastBreakMillis = currentTime;
                 return true;

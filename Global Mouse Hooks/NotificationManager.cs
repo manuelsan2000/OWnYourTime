@@ -84,7 +84,7 @@ namespace Global_Mouse_Hooks
                     {
                         HeroImage = new ToastGenericHeroImage()
                         {
-                            Source = "1043-360x180.jpg"
+                            Source = System.IO.Path.GetFullPath("1043-360x180.jpg")
                         },
 
                         Children =
@@ -99,21 +99,16 @@ namespace Global_Mouse_Hooks
                                 Text = message
                             },
 
-                             new AdaptiveImage()
-                            {
-                                // Non-Desktop Bridge apps cannot use HTTP images, so
-                                // we download and reference the image locally
-                                Source = await DownloadImageToDisk(image)
-                            }
+                          
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
-                            Source = "1005-64x64.jpg",
+                            Source = System.IO.Path.GetFullPath("1005 -64x64.jpg"),
                             HintCrop = ToastGenericAppLogoCrop.Circle
                         },   
                     }
                 },
-                Duration = ToastDuration.Long,
+               // Duration = ToastDuration.Long,
 
                 Actions = new ToastActionsCustom()
                 {
