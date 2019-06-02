@@ -2,7 +2,7 @@
 using System.Net;
 using Newtonsoft.Json.Linq;
 
-namespace Global_Mouse_Hooks
+namespace OWn_Your_Time
 {
 
     public class ConfigValues

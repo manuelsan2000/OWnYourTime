@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{526634B9-FB9B-49BD-A526-11FD105538C7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>OWnYourTime</RootNamespace>
+    <RootNamespace>OWn_Your_Time</RootNamespace>
     <AssemblyName>OWnYourTime</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Global_Mouse_Hooks.Program</StartupObject>
+    <StartupObject>OWn_Your_Time.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BitmapNet, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">

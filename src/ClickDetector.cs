@@ -1,11 +1,7 @@
 ﻿using Gma.System.MouseKeyHook;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Global_Mouse_Hooks
+namespace OWn_Your_Time
 {
     public class ClickDetector
     {

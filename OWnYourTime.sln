@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27703.2018
+VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OWnYourTime", "Global Mouse Hooks\OWnYourTime.csproj", "{526634B9-FB9B-49BD-A526-11FD105538C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OWnYourTime", "src\OWnYourTime.csproj", "{526634B9-FB9B-49BD-A526-11FD105538C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {0319E4EC-8A08-443B-A156-16B15D8E2999}
+		SolutionGuid = {A4B6ABF7-BF59-46C6-A8CF-FF9502D2C0BC}
 	EndGlobalSection
 EndGlobal

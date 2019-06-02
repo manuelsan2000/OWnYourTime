@@ -1,17 +1,12 @@
 ﻿using Microsoft.QueryStringDotNET;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 
-namespace Global_Mouse_Hooks
+namespace OWn_Your_Time
 {
     class NotificationManager
     {
@@ -63,8 +58,6 @@ namespace Global_Mouse_Hooks
 
         public async Task<string> createToasterTemplateButtonsAsync(string message, String message2, String heroImage)
         {
-
-            string image = "https://picsum.photos/364/202?image=883";
 
             // Construct the toast content
             ToastContent toastContent = new ToastContent()

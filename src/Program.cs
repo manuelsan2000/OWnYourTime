@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using System.Windows.Forms;
 
-namespace Global_Mouse_Hooks
+namespace OWn_Your_Time
 {
     static class Program
     {
