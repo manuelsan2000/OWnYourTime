@@ -137,7 +137,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DesktopNotificationManagerCompat.cs" />
     <Compile Include="ListenerThread.cs" />
     <Compile Include="ConfigValues.cs" />
     <Compile Include="ClickDetector.cs" />
