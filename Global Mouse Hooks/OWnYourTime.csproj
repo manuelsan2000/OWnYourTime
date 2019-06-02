@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{526634B9-FB9B-49BD-A526-11FD105538C7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Global_Mouse_Hooks</RootNamespace>
-    <AssemblyName>Global Mouse Hooks</AssemblyName>
+    <RootNamespace>OWnYourTime</RootNamespace>
+    <AssemblyName>OWnYourTime</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
     <FileAlignment>512</FileAlignment>
@@ -137,7 +137,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="DesktopNotificationManagerCompat.cs" />
     <Compile Include="ListenerThread.cs" />
     <Compile Include="ConfigValues.cs" />

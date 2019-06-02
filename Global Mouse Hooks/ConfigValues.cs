@@ -1,14 +1,5 @@
-﻿using Microsoft.QueryStringDotNET;
-using Microsoft.Toolkit.Uwp.Notifications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Data.Xml.Dom;
-using Windows.UI.Notifications;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json.Linq;
 
 namespace Global_Mouse_Hooks
@@ -19,7 +10,7 @@ namespace Global_Mouse_Hooks
         public static string appIdStr = "OWn Your Time";
         public static int alertExpirationTimeSeconds = 3;
         public static int idleTimeToUpdateBreakMiliseconds = 15000;
-        public static int workingTimeBeforeAlertMiliseconds = 20000;
+        public static int workingTimeBeforeAlertMiliseconds = 25000;
 
         public static long lastActivityMillis;
         public static long startActivityMillis;
