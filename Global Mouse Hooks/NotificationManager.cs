@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,12 +20,11 @@ namespace Global_Mouse_Hooks
             //Constructor
         }
 
-        public void sendDesktopInitialNotification(string message, Boolean hasButtons)
+        public void sendDesktopInitialNotification(string message, Boolean hasButtons, String heroImag)
         {
             try
             {
-                //PopUp("INI STRING1", "INI STRING2", "INI STRING3");
-                sendNotificationMessage(message, hasButtons);
+                sendNotificationMessage(message, "", hasButtons, heroImag);
             }
             catch (Exception e)
             {
@@ -33,25 +33,23 @@ namespace Global_Mouse_Hooks
             //SEND NOTIFICATION CODE
         }
 
-        public async void sendNotificationMessage(string message, Boolean hasButtons)
+        public async void sendNotificationMessage(string message, String message2, Boolean hasButtons, String heroImage)
         {
             try
             {
-                //PopUp("INI STRING1", "INI STRING2", "INI STRING3");
                 XmlDocument tileXml = new XmlDocument();
                 String xmlContent;
                 if (hasButtons)
                 {
-                    xmlContent = await createToasterTemplateButtonsAsync(message);
+                    xmlContent = await createToasterTemplateButtonsAsync(message, message2, heroImage);
                 }
                 else {
-                    xmlContent = await createToasterTemplateAsync(message);
+                    xmlContent = await createToasterTemplateAsync(message, message2);
                 }
 
                 tileXml.LoadXml(xmlContent);
-                var toast = new ToastNotification(tileXml);
-
-                toast.ExpirationTime = DateTime.Now.AddSeconds(ConfigValues.alertExpirationTimeSeconds);
+                var toast = new ToastNotification(tileXml);             
+                //toast.ExpirationTime = DateTime.Now.AddSeconds(ConfigValues.alertExpirationTimeSeconds);
                 toast.Tag = ConfigValues.appIdStr + ConfigValues.notificationId++;
                 toast.Group = ConfigValues.appIdStr;
 
@@ -63,7 +61,7 @@ namespace Global_Mouse_Hooks
             }
         }
 
-        public async Task<string> createToasterTemplateButtonsAsync(string message)
+        public async Task<string> createToasterTemplateButtonsAsync(string message, String message2, String heroImage)
         {
 
             string image = "https://picsum.photos/364/202?image=883";
@@ -84,22 +82,24 @@ namespace Global_Mouse_Hooks
                     {
                         HeroImage = new ToastGenericHeroImage()
                         {
-                            Source = System.IO.Path.GetFullPath("1043-360x180.jpg")
+                            Source = DownloadImageToDisk(heroImage)
                         },
 
                         Children =
                         {
                             new AdaptiveText()
                             {
-                                Text = ConfigValues.appIdStr
+                                Text =message
                             },
 
-                            new AdaptiveText()
+                      
+
+                             new AdaptiveText()
                             {
-                                Text = message
-                            },
+                                Text = message2
+                            }
 
-                          
+
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
@@ -108,7 +108,7 @@ namespace Global_Mouse_Hooks
                         },   
                     }
                 },
-               // Duration = ToastDuration.Long,
+               Duration = ToastDuration.Long,
 
                 Actions = new ToastActionsCustom()
                 {
@@ -132,7 +132,12 @@ namespace Global_Mouse_Hooks
                             SelectionBoxId = "snoozeTime"
                         },
 
-                        new ToastButtonDismiss()
+                       new ToastButton("Let's go", new QueryString()
+                        {
+                            { "action", "like" },
+                            { "conversationId" }
+
+                        }.ToString()),
                     }
                 }
             };
@@ -141,7 +146,7 @@ namespace Global_Mouse_Hooks
             return toastContent.GetContent();
         }
 
-        public async Task<string> createToasterTemplateAsync(string message)
+        public async Task<string> createToasterTemplateAsync(string message, String message2)
         {
 
             string image = "https://picsum.photos/364/202?image=883";
@@ -172,12 +177,7 @@ namespace Global_Mouse_Hooks
                                 Text = message
                             },
 
-                             new AdaptiveImage()
-                            {
-                                // Non-Desktop Bridge apps cannot use HTTP images, so
-                                // we download and reference the image locally
-                                Source = await DownloadImageToDisk(image)
-                            }
+                           
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
@@ -194,57 +194,22 @@ namespace Global_Mouse_Hooks
         }
 
 
-        private static bool _hasPerformedCleanup;
-        private static async Task<string> DownloadImageToDisk(string httpImage)
+        private static  string DownloadImageToDisk(string httpImage)
         {
-            // Toasts can live for up to 3 days, so we cache images for up to 3 days.
-            // Note that this is a very simple cache that doesn't account for space usage, so
-            // this could easily consume a lot of space within the span of 3 days.
+            WebProxy proxyObj = new WebProxy("http://usdal1-03pr02-vip.mgd.mrshmc.com:8888");
+            proxyObj.Credentials = CredentialCache.DefaultCredentials;
 
-            try
+            int imageLenghtName = httpImage.Length - httpImage.LastIndexOf("/");
+            String httpImageName = httpImage.Substring(httpImage.LastIndexOf("/") + 1 , imageLenghtName - 1);
+
+            string localFilename = @"c:\\TempImages\"+ httpImageName;
+            using (WebClient client = new WebClient())
             {
-                if (DesktopNotificationManagerCompat.CanUseHttpImages)
-                {
-                    return httpImage;
-                }
-
-                var directory = Directory.CreateDirectory(System.IO.Path.GetTempPath() + "WindowsNotifications.DesktopToasts.Images");
-
-                if (!_hasPerformedCleanup)
-                {
-                    // First time we run, we'll perform cleanup of old images
-                    _hasPerformedCleanup = true;
-
-                    foreach (var d in directory.EnumerateDirectories())
-                    {
-                        if (d.CreationTimeUtc.Date < DateTime.UtcNow.Date.AddDays(-3))
-                        {
-                            d.Delete(true);
-                        }
-                    }
-                }
-
-                var dayDirectory = directory.CreateSubdirectory(DateTime.UtcNow.Day.ToString());
-                string imagePath = dayDirectory.FullName + "\\" + (uint)httpImage.GetHashCode();
-
-                if (File.Exists(imagePath))
-                {
-                    return imagePath;
-                }
-
-                HttpClient c = new HttpClient();
-                using (var stream = await c.GetStreamAsync(httpImage))
-                {
-                    using (var fileStream = File.OpenWrite(imagePath))
-                    {
-                        stream.CopyTo(fileStream);
-                    }
-                }
-
-                return imagePath;
+                client.Proxy = proxyObj;
+                client.DownloadFile(httpImage, localFilename);
             }
-            catch { return ""; }
+            Console.WriteLine(localFilename);
+            return localFilename;
         }
-
     }
 }

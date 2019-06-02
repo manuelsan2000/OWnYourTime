@@ -3,10 +3,13 @@ using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace Global_Mouse_Hooks
 {
@@ -16,7 +19,7 @@ namespace Global_Mouse_Hooks
         public static string appIdStr = "OWn Your Time";
         public static int alertExpirationTimeSeconds = 3;
         public static int idleTimeToUpdateBreakMiliseconds = 15000;
-        public static int workingTimeBeforeAlertMiliseconds = 10000;
+        public static int workingTimeBeforeAlertMiliseconds = 20000;
 
         public static long lastActivityMillis;
         public static long startActivityMillis;
@@ -46,8 +49,9 @@ namespace Global_Mouse_Hooks
             {
                 //JUST STARTED OR RETURNED FROM BREAK
                 //SEND NOTIFICATION TO TAKE BREAKS EVERY HOUR
-                new NotificationManager().sendNotificationMessage("Recuerda que es importante tomar breaks de al menos 5 minutos cada hora " +
-                    "por salud", false);
+
+
+                new NotificationManager().sendNotificationMessage("Keep in mind: It is recommended to take at least 5 min break each hour.", "", false, "");
                 lastBreakMillis = currentTime;
                 continousWorkingTimeMillis = 1;
                 lastNotificationMillis = currentTime;
@@ -71,113 +75,43 @@ namespace Global_Mouse_Hooks
 
             if (elapsedTime > workingTimeBeforeAlertMiliseconds ) //X tiempo trabajado
             {
-                new NotificationManager().sendNotificationMessage($"Hemos detectado que llevas { elapsedTime/60000 } minutos sin descansar, por favor toma un break!", true);
+
+                //CREATE WEB OBBECT WITH OLIVER WYMAN PROXY
+                WebProxy proxyObj = new WebProxy("http://usdal1-03pr02-vip.mgd.mrshmc.com:8888");
+                proxyObj.Credentials = CredentialCache.DefaultCredentials;
+                WebClient myWebClient = new WebClient();
+                myWebClient.Proxy = proxyObj;
+
+                // GETTING JSON
+                var json = myWebClient.DownloadString("https://spreadsheets.google.com/feeds/list/1xRGex8sYPd6P4OaxLbSkTgoTFkK2KWU2U8M9NmaTrd8/od6/public/basic?alt=json&pli=1");
+
+                dynamic spreadsheets = Newtonsoft.Json.JsonConvert.DeserializeObject(json.ToString());
+                JArray messages = (JArray)spreadsheets["feed"]["entry"];
+                int messagesCount = messages.Count - 1;
+
+                Random random = new Random();
+                int rInt = random.Next(0, messagesCount);
+                String messageFullToWrite = spreadsheets["feed"]["entry"][rInt]["content"]["$t"];
+                String messageToWrite = messageFullToWrite.Substring(0, messageFullToWrite.IndexOf(", imageurl: "));
+
+                String[] arrString = messageFullToWrite.Split(',');
+                Console.WriteLine(arrString[1]);
+
+
+
+                String imageHero = arrString[1];
+                imageHero = imageHero.Replace(" imageurl: ", "");
+
+                Console.WriteLine(imageHero);
+                new NotificationManager().sendNotificationMessage($"We noticed that you been working for to long, Please take a break!", messageToWrite.Replace("message: ", ""),  true, imageHero);
                 lastNotificationMillis = currentTime;
                 lastBreakMillis = currentTime;
                 return true;
+
             }
             return false;
         }
         
-        /*public static void PopUp(String msg1, String msg2, String msg3)
-        {
-            string title = msg1;
-            string content = msg2;
-            string image = "https://picsum.photos/364/202?image=883";
-           int conversationId = 5;
-
-            // Construct the toast content
-            ToastContent toastContent = new ToastContent()
-            {
-                // Arguments when the user taps body of toast
-                Launch = new QueryString()
-               {
-                   { "action", "viewConversation" },
-                   { "conversationId", conversationId.ToString() }
-
-               }.ToString(),
-
-                Visual = new ToastVisual()
-                {
-                    BindingGeneric = new ToastBindingGeneric()
-                    {
-                        Children =
-                       {
-                           new AdaptiveText()
-                           {
-                               Text = title
-                           },
-
-                           new AdaptiveText()
-                           {
-                               Text = content
-                           },
-
-                           new AdaptiveImage()
-                           {
-                               // Non-Desktop Bridge apps cannot use HTTP images, so
-                               // we download and reference the image locally
-                               //Source = await DownloadImageToDisk(image)
-                           }
-                       },
-
-                        AppLogoOverride = new ToastGenericAppLogo()
-                        {
-                            //Source = await DownloadImageToDisk("https://unsplash.it/64?image=1005"),
- 
-                            HintCrop = ToastGenericAppLogoCrop.Circle
-                        }
-                    }
-                },
-
-                Actions = new ToastActionsCustom()
-                {
-                    Inputs =
-                   {
-                       new ToastTextBox("tbReply")
-                       {
-                           PlaceholderContent = "Type a response"
-                       }
-                   },
-
-                    Buttons =
-                   {
-                       // Note that there's no reason to specify background activation, since our COM
-                       // activator decides whether to process in background or launch foreground window
-                       new ToastButton("Reply", new QueryString()
-                       {
-                           { "action", "reply" },
-                           { "conversationId", conversationId.ToString() }
-
-                       }.ToString()),
-
-                       new ToastButton("Like", new QueryString()
-                       {
-                           { "action", "like" },
-                           { "conversationId", conversationId.ToString() }
-
-                       }.ToString()),
-
-                       new ToastButton("View", new QueryString()
-                       {
-                           { "action", "viewImage" },
-                           { "imageUrl", image }
-
-                       }.ToString())
-                   }
-                }
-            };
-
-            // Make sure to use Windows.Data.Xml.Dom
-            var doc = new XmlDocument();
-            doc.LoadXml(toastContent.GetContent());
-
-            // And create the toast notification
-            var toast = new ToastNotification(doc);
-
-            // And then show it
-            ToastNotificationManager.CreateToastNotifier().Show(toast);
-        }
-        */
+       
     }
 }
